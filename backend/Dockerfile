@@ -1,35 +1,25 @@
-# Stage 1
-# sdk = software development kit
+# Etapa 1: build
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 
-# SRC => Source
 WORKDIR /src
 
-ENV PATH="$PATH:/root/.dotnet/tools"
+# Copiar o projeto inteiro
+COPY ./RecipeManagerAPI/ ./RecipeManagerAPI/
 
-COPY *.csproj .
+# Ir para a pasta do projeto
+WORKDIR /src/RecipeManagerAPI
 
-# like: npm install (to install the packages from package.json)
-# but here: dotnet restore  --> will install the packages from api.csproj
-RUN dotnet restore 
+# Restaurar dependências
+RUN dotnet restore
 
-COPY . .
-
-WORKDIR /src
-
-# like: npm run build
+# Publicar a aplicação
 RUN dotnet publish -c Release -o /app/publish
 
-
-
-# Stage 2
-
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+# Etapa 2: runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 
 WORKDIR /app
 
 COPY --from=build /app/publish .
 
-EXPOSE 8080
-
-ENTRYPOINT ["sh", "-c", "dotnet backend.dll"
+ENTRYPOINT ["dotnet", "RecipeManagerAPI.dll"]

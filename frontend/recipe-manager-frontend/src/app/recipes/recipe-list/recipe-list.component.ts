@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './recipe-list.component.html',
-  styleUrls: ['./recipe-list.component.css'] 
+  styleUrls: ['./recipe-list.component.css']
 })
 export class RecipeListComponent { }
-

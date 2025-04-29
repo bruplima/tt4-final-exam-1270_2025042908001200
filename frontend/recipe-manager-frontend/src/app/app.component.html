@@ -3,8 +3,71 @@
 
   <span style="flex: 1 1 auto;"></span>
 
-  <button mat-button routerLink="/recipes">Recipes</button>
-  <button mat-button routerLink="/recipes/create">Add Recipe</button>
+  <button mat-button (click)="currentView = 'list'">Recipes</button>
+  <button mat-button (click)="currentView = 'create'">Add Recipe</button>
 </mat-toolbar>
 
-<router-outlet></router-outlet>
+<div style="padding: 20px;">
+  <ng-container [ngSwitch]="currentView">
+
+    <!-- LISTA DE RECEITAS -->
+    <div *ngSwitchCase="'list'">
+      <h2>Recipe List</h2>
+      <div *ngIf="recipes.length === 0">No recipes yet.</div>
+      <ul>
+        <li *ngFor="let recipe of recipes; let i = index">
+          <strong>{{ recipe.name }}</strong> - {{ recipe.ingredients }}<br>
+          <em>{{ recipe.instructions }}</em>
+          <div style="margin-top: 5px;">
+            <button mat-button color="accent" (click)="editRecipe(i)">Edit</button>
+            <button mat-button color="warn" (click)="deleteRecipe(i)">Delete</button>
+          </div>
+          <hr>
+        </li>
+      </ul>
+    </div>
+
+    <!-- FORMULÁRIO PARA CRIAR RECEITA -->
+    <div *ngSwitchCase="'create'">
+      <h2>Add New Recipe</h2>
+      <form (ngSubmit)="addRecipe()">
+        <div>
+          <label>Name:</label>
+          <input type="text" [(ngModel)]="newRecipe.name" name="name" required>
+        </div>
+        <div>
+          <label>Ingredients:</label>
+          <input type="text" [(ngModel)]="newRecipe.ingredients" name="ingredients" required>
+        </div>
+        <div>
+          <label>Instructions:</label>
+          <textarea [(ngModel)]="newRecipe.instructions" name="instructions" required></textarea>
+        </div>
+        <button mat-raised-button color="primary" type="submit">Save Recipe</button>
+      </form>
+    </div>
+
+    <!-- FORMULÁRIO PARA EDITAR RECEITA -->
+    <div *ngSwitchCase="'edit'">
+      <div *ngIf="editRecipeData">
+        <h2>Edit Recipe</h2>
+        <form (ngSubmit)="updateRecipe()">
+          <div>
+            <label>Name:</label>
+            <input type="text" [(ngModel)]="editRecipeData.name" name="editName" required>
+          </div>
+          <div>
+            <label>Ingredients:</label>
+            <input type="text" [(ngModel)]="editRecipeData.ingredients" name="editIngredients" required>
+          </div>
+          <div>
+            <label>Instructions:</label>
+            <textarea [(ngModel)]="editRecipeData.instructions" name="editInstructions" required></textarea>
+          </div>
+          <button mat-raised-button color="primary" type="submit">Update Recipe</button>
+        </form>
+      </div>
+    </div>
+
+  </ng-container>
+</div>
